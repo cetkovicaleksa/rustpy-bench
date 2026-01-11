@@ -1,9 +1,11 @@
+<!--
 ---
 title: "Project Proposal: A Comparative Benchmark Python versus Rust on Numerical Solving of the Heat Equation"
 author: "Алекса Ћетковић"
 date: 2026-1-10
 type: "markdown"
 ---
+-->
 
 <div align="left">
   <picture>
