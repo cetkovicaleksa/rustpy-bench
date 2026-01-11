@@ -1,2 +1,2 @@
 * text=auto eol=lf
-/docs/images/* -text -diff
+/docs/assets/* -text -diff

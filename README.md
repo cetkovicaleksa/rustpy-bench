@@ -1,8 +1,15 @@
+---
+title: "Project Proposal: A Comparative Benchmark Python versus Rust on Numerical Solving of the Heat Equation"
+author: "Алекса Ћетковић"
+date: 2026-1-10
+type: "markdown"
+---
+
 <div align="left">
   <picture>
-    <source srcset="docs/images/ФТН_УНС_лого-dark.svg" media="(prefers-color-scheme: dark)">
-    <source srcset="docs/images/ФТН_УНС_лого-light.svg" media="(prefers-color-scheme: light)">
-    <img src="docs/images/ФТН_УНС_лого-light.svg" alt="FTN Logo" height="150">
+    <source srcset="docs/assets/ФТН_УНС_лого-dark.svg" media="(prefers-color-scheme: dark)">
+    <source srcset="docs/assets/ФТН_УНС_лого-light.svg" media="(prefers-color-scheme: light)">
+    <img src="docs/assets/ФТН_УНС_лого-light.svg" alt="FTN Logo" height="150">
   </picture>
 </div>
 
