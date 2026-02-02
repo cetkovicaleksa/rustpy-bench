@@ -1,0 +1,18 @@
+[tool.uv.workspace]
+members = ["packages/*"]
+# cache-dir = "./.cache/uv"
+
+[tool.uv]
+required-version = "==0.9.27"
+add-bounds = "exact"
+compile-bytecode = false # maybe set to true ?
+# below just in case I fork on parallel and serial impls
+build-constraint-dependencies = ["uv_build>=0.9.27,<0.10.0"]
+constraint-dependencies = ["numpy==2.4.2"]
+
+# uv requires a root project (let it be a virtual one). This could be the project that preforms experiments, with maturin and PyO3.
+[project]
+name = "rustpy-bench"
+version = "2026"
+requires-python = ">=0"
+authors = [{ name = "Алекса Ћетковић", email = "cetkovic.sv77.2022@uns.ac.rs" }]
