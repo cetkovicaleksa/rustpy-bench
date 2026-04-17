@@ -1,18 +1,36 @@
 [tool.uv.workspace]
-members = ["packages/*"]
+members = [
+    "python/*",
+    "rust/*",
+]
 # cache-dir = "./.cache/uv"
 
 [tool.uv]
-required-version = "==0.9.27"
-add-bounds = "exact"
-compile-bytecode = false # maybe set to true ?
+managed = true
+# package = false
+required-version = ">=0.9.27" # NOTE: To be more strict use "==0.9.27"
 # below just in case I fork on parallel and serial impls
 build-constraint-dependencies = ["uv_build>=0.9.27,<0.10.0"]
 constraint-dependencies = ["numpy==2.4.2"]
+
+[tool.uv.sources]
+heatrs-mp = { workspace = true }
+heatpy = { workspace = true }
+heatpy-mp = { workspace = true }
+heatrs = { workspace = true }
+heatrs-mt = { workspace = true }
 
 # uv requires a root project (let it be a virtual one). This could be the project that preforms experiments, with maturin and PyO3.
 [project]
 name = "rustpy-bench"
 version = "2026"
 requires-python = ">=0"
-authors = [{ name = "Алекса Ћетковић", email = "cetkovic.sv77.2022@uns.ac.rs" }]
+dependencies = []
+
+[dependency-groups]
+dev = [
+    "heatpy",
+    "heatpy-mp",
+    "heatrs",
+    "heatrs-mt",
+]

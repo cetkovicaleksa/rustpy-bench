@@ -1,0 +1,9 @@
+[package]
+name = "heatrs-mt"
+version.workspace = true
+authors.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license-file.workspace = true
+
+[dependencies]

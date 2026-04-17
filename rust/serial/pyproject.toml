@@ -1,0 +1,16 @@
+[project]
+name = "heatrs"
+version = "2026.4.0"
+description = "Add your description here"
+authors = [
+    { name = "Алекса Ћетковић", email = "cetkovic.sv77.2022@uns.ac.rs" }
+]
+requires-python = ">=3.12"
+dependencies = []
+
+[tool.uv]
+cache-keys = [{ file = "pyproject.toml" }, { file = "src/**/*.rs" }, { file = "Cargo.toml" }, { file = "Cargo.lock" }]
+
+[build-system]
+requires = ["maturin>=1.0,<2.0"]
+build-backend = "maturin"

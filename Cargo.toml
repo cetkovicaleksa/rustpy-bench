@@ -1,9 +1,10 @@
 [workspace]
 resolver = "3"
-members = ["crates/*"]
+members = ["rust/*"]
 
 [workspace.package]
-version = "2026.2.0"
-authors = [{ name = "Алекса Ћетковић", email = "cetkovic.sv77.2022@uns.ac.rs" }]
+version = "2026.4.0"
+authors = ["Алекса Ћетковић <cetkovic.sv77.2022@uns.ac.rs>"]
 edition = "2024"
 rust-version = "1.93.0"
+license-file = "license"

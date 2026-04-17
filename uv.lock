@@ -1,12 +1,57 @@
 version = 1
 revision = 3
-requires-python = ">=0"
+requires-python = ">=3.12"
 
 [manifest]
+members = [
+    "heatpy",
+    "heatpy-mp",
+    "heatrs",
+    "heatrs-mt",
+    "rustpy-bench",
+]
 constraints = [{ name = "numpy", specifier = "==2.4.2" }]
 build-constraints = [{ name = "uv-build", specifier = ">=0.9.27,<0.10.0" }]
+
+[[package]]
+name = "heatpy"
+version = "2026.4.0"
+source = { editable = "python/serial" }
+
+[[package]]
+name = "heatpy-mp"
+version = "2026.4.0"
+source = { editable = "python/multi-processing" }
+
+[[package]]
+name = "heatrs"
+version = "2026.4.0"
+source = { editable = "rust/serial" }
+
+[[package]]
+name = "heatrs-mt"
+version = "2026.4.0"
+source = { editable = "rust/multi-threading" }
 
 [[package]]
 name = "rustpy-bench"
 version = "2026"
 source = { virtual = "." }
+
+[package.dev-dependencies]
+dev = [
+    { name = "heatpy" },
+    { name = "heatpy-mp" },
+    { name = "heatrs" },
+    { name = "heatrs-mt" },
+]
+
+[package.metadata]
+
+[package.metadata.requires-dev]
+dev = [
+    { name = "heatpy", editable = "python/serial" },
+    { name = "heatpy-mp", editable = "python/multi-processing" },
+    { name = "heatrs", editable = "rust/serial" },
+    { name = "heatrs-mt", editable = "rust/multi-threading" },
+]
