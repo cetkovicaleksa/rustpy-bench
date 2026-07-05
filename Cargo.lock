@@ -218,6 +218,12 @@ dependencies = [
 [[package]]
 name = "heatrs-mt"
 version = "2026.4.0"
+dependencies = [
+ "anyhow",
+ "clap",
+ "ndarray",
+ "rustpy-bench-core",
+]
 
 [[package]]
 name = "heck"

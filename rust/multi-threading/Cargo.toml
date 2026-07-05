@@ -7,3 +7,7 @@ rust-version.workspace = true
 license-file.workspace = true
 
 [dependencies]
+rustpy-bench-core.workspace = true
+clap.workspace = true
+anyhow.workspace = true
+ndarray.workspace = true
