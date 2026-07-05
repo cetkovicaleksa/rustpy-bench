@@ -122,4 +122,4 @@ The report and resulting assets from my experiment run can be found at [results/
 
 | gaussian | hot square | uniform |
 |:-:|:-:|:-:|
-| ![sim with gaussian init](results/2026-07-05/examples/gaussian100x100-100s.gif) | ![sim with hot-square init](results/2026-07-05/examples/hot-square320x256-20s.gif) | ![sim with unifor init](results/2026-07-05/examples/uniform100x100-77s.gif) |
+| ![sim with gaussian init](docs/assets/gaussian100x100-100s.gif) | ![sim with hot-square init](docs/assets/hot-square320x256-20s.gif) | ![sim with unifor init](docs/assets/uniform100x100-77s.gif) |
