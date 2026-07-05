@@ -196,7 +196,7 @@ The sequential fraction $s = 1 - p$ limits how closely this ideal can be reached
 
 All four variants produce numerically identical results: the maximum pairwise
 difference in the final temperature field across all implementations and worker
-counts is $2.8 times 10^(-14)$ (floating-point rounding noise).
+counts is $1.99 times 10^(-13)$ (floating-point rounding noise).
 
 - *`heatpy` (serial Python)* --- NumPy vectorised stencil via `numpy.roll`;
   Dirichlet boundary re-pinned after every step.
@@ -222,28 +222,40 @@ counts is $2.8 times 10^(-14)$ (floating-point rounding noise).
 = Scaling Experiments
 // ════════════════════════════════════════════════════════════
 
-Each configuration was repeated 10 times; reported times cover only the solver
+Each configuration was repeated 5 times; reported times cover only the solver
 loop (file I/O excluded). Outliers are defined as runs deviating by more than
-three standard deviations from the mean.
+three standard deviations from the mean. Measurements were collected for
+1, 2, and 4 workers/threads (matching the two physical / four logical cores
+of the test machine); a 3-worker configuration was not run, so it is omitted
+from all tables and figures below.
 
 For weak scaling the grid grows as $n_x (n) = 256 sqrt(n)$,
 $n_y (n) = 256 sqrt(n)$, so that work per worker is proportional to
-$256^2 = 65\,536$ cells --- constant regardless of worker count.
+$256^2 = 65\,536$ cells per time step --- constant regardless of worker count.
+However, the CFL-limited time step $Delta t prop Delta x^2$ shrinks as the
+grid is refined, so the number of steps $n_t$ needed to reach the same
+physical end time $t_"end"$ grows linearly with $n$ (see @tbl-weak-grid).
+Weak scaling therefore does not hold total work constant here: each worker
+still does a constant amount of work per step, but the number of steps
+increases with the worker count, so wall-clock time is expected to grow with
+$n$ even under perfect parallel efficiency.
 
 #figure(
   table(
     columns: (auto, auto, auto),
     stroke: 0.4pt, inset: 5pt,
     [*Workers*], [*Grid*],           [*$n_t$*],
-    [1],         [$256 times 256$],  [31],
-    [2],         [$362 times 362$],  [62],
-    [3],         [$443 times 443$],  [93],
-    [4],         [$512 times 512$],  [123],
+    [1],         [$256 times 256$],  [308],
+    [2],         [$362 times 362$],  [615],
+    [4],         [$512 times 512$],  [1229],
   ),
   caption: [
-    Weak-scaling grid sizes. Total cells $approx 65\,536 times n_"workers"$.
+    Weak-scaling grid sizes ($t_"end" = 50$ s). Total cells per step
+    $approx 65\,536 times n_"workers"$, but $n_t$ grows roughly linearly with
+    $n_"workers"$ because of the CFL constraint.
   ]
-)
+) <tbl-weak-grid>
+
 
 == Strong Scaling --- Python <sec-strong-py>
 
@@ -251,8 +263,8 @@ $256^2 = 65\,536$ cells --- constant regardless of worker count.
   image("assets/strong_python.png", width: 82%),
   caption: [
     Strong scaling of `heatpy-mp` relative to the serial `heatpy` baseline. \
-    Grid: $512 times 512$, $t_"end" = 5$ s, $n_t = 123$. \
-    Dashed blue line: Amdahl's law with empirically fitted $p = 0.2683$.
+    Grid: $512 times 512$, $t_"end" = 50$ s, $n_t = 1229$. \
+    Dashed blue line: Amdahl's law with empirically fitted $p = 0.6447$.
   ]
 )
 
@@ -262,33 +274,35 @@ $256^2 = 65\,536$ cells --- constant regardless of worker count.
     stroke: 0.4pt, inset: 5.5pt,
     align: (left, right, right, right, right),
     [*Workers*],          [*Mean (s)*], [*Std (s)*], [*Speedup*], [*Outliers*],
-    [`heatpy` (serial)],  [0.6039],    [0.0185],    [1.000],     [0],
-    [1 (`heatpy-mp`)],    [0.4532],    [0.0146],    [1.332],     [0],
-    [2],                  [0.4888],    [0.0203],    [1.235],     [0],
-    [3],                  [0.4987],    [0.0289],    [1.211],     [0],
-    [4],                  [0.4983],    [0.0149],    [1.212],     [0],
+    [`heatpy` (serial)],  [9.9403],    [0.1195],    [1.000],     [0],
+    [1 (`heatpy-mp`)],    [6.4296],    [0.0931],    [1.546],     [0],
+    [2],                  [5.1964],    [0.0434],    [1.913],     [0],
+    [4],                  [5.6256],    [0.1461],    [1.767],     [0],
   ),
   caption: [Strong-scaling results for Python. Speedup $= T_"serial" \/ T_n$.]
 )
 
-The parallel variant peaks at 1.33× with one worker and stabilises near 1.21×
-for two to four workers.
+The parallel variant already gains 1.55× with a single worker and peaks at
+1.91× with two workers, before falling back slightly to 1.77× at four.
 The gain at one worker arises from a structural difference between the two
 implementations: `heatpy` uses `numpy.roll`, which allocates a temporary array
 on every call, whereas `heatpy-mp` operates on contiguous shared-memory row
 slices without intermediate allocation.
-Adding further workers yields no additional gain because the stencil is
-memory-bandwidth-bound: the double buffer ($2 times 2$ MiB per frame) exceeds
-the 3 MiB L3 cache, so each step is limited by DDR4 throughput rather than
-compute. The two logical cores on each Skylake physical core share the same L3
-and memory bus, which explains the flat speedup curve from two to four workers.
+The regression from two to four workers is consistent with the machine's
+topology: the test system has only two physical cores exposing four logical
+cores via hyper-threading (@tbl-weak-grid and the environment table both
+reflect this). Workers three and four land on sibling hyper-threads of the
+same two physical cores, which share L1/L2 caches, the 3 MiB L3, and the
+DDR4 memory bus with their sibling, so they add scheduling and
+synchronisation overhead without adding independent compute or memory
+bandwidth.
 
 Fitting Amdahl's law to the measured values gives an effective parallel
-fraction $p_"eff" = 0.2683$ and a theoretical maximum of
-$S_"max" = 1 \/ (1 - 0.2683) approx 1.37 times$.
-The gap from the ideal $p_"ideal" = 0.9922$ reflects the bandwidth bottleneck:
-when workers contend for the same DDR4 channel, the parallelisable compute
-fraction shrinks relative to memory-access stalls.
+fraction $p_"eff" = 0.6447$ and a theoretical maximum of
+$S_"max" = 1 \/ (1 - 0.6447) approx 2.81 times$.
+This is well below the ideal $p_"ideal" = 0.9922$: the fit is pulled down by
+the four-worker regression, reflecting that only two workers can run on
+genuinely independent cores on this hardware.
 
 == Strong Scaling --- Rust <sec-strong-rs>
 
@@ -297,7 +311,7 @@ fraction shrinks relative to memory-access stalls.
   caption: [
     Strong scaling of `heatrs-mt` relative to the serial `heatrs` baseline. \
     Same grid as above. \
-    Dashed red line: Amdahl's law with empirically fitted $p = 0.0778$.
+    Dashed red line: Amdahl's law with empirically fitted $p = 0.7296$.
   ]
 )
 
@@ -307,26 +321,32 @@ fraction shrinks relative to memory-access stalls.
     stroke: 0.4pt, inset: 5.5pt,
     align: (left, right, right, right, right),
     [*Threads*],          [*Mean (s)*], [*Std (s)*], [*Speedup*], [*Outliers*],
-    [`heatrs` (serial)],  [0.1473],    [0.0016],    [1.000],     [0],
-    [2],                  [0.1392],    [0.0016],    [1.058],     [0],
-    [3],                  [0.1390],    [0.0011],    [1.059],     [0],
-    [4],                  [0.1408],    [0.0015],    [1.046],     [0],
+    [`heatrs` (serial)],  [2.4909],    [0.0829],    [1.000],     [0],
+    [1 (`heatrs-mt`)],    [2.4610],    [0.1980],    [1.012],     [0],
+    [2],                  [1.2589],    [0.0725],    [1.979],     [0],
+    [4],                  [1.2025],    [0.0760],    [2.071],     [0],
   ),
   caption: [Strong-scaling results for Rust. Speedup $= T_"serial" \/ T_n$.]
 )
 
-The multi-threaded Rust solver achieves a peak of 1.06× at two to three
-threads and degrades slightly at four.
-Two factors explain the modest gain.
-First, the serial solver at 0.147 s is already
-$0.604 \/ 0.147 approx 4.1 times$ faster than the serial NumPy implementation,
-leaving little absolute time to save.
-Second, at this working-set size (4 MiB double buffer exceeding the 3 MiB L3
-cache) the solver is bandwidth-bound, so adding threads does not reduce the
-memory-access bottleneck.
-The fitted effective parallel fraction $p_"eff" = 0.0778$ gives
-$S_"max" = 1 \/ (1 - 0.0778) approx 1.08 times$,
-consistent with the observed saturation beyond two threads.
+The multi-threaded Rust solver shows essentially no gain at one thread
+(1.01×, as expected --- it is running the same partitioned algorithm on a
+single thread with added synchronisation), then scales to 1.98× at two
+threads and continues improving to 2.07× at four --- unlike the Python
+variant, Rust does not regress on the two extra hyper-threads.
+The serial Rust solver at 2.4909 s is already
+$9.9403 \/ 2.4909 approx 3.99 times$ faster than the serial NumPy
+implementation, consistent with auto-vectorised SIMD stencil code and
+zero-copy double-buffer management.
+That the thread-based Rust implementation keeps gaining through four logical
+cores, while the process-based Python implementation does not, suggests its
+per-step synchronisation (`std::sync::Barrier`, no allocation, no IPC) is
+cheaper relative to compute than Python's `multiprocessing.Barrier` and
+shared-memory handshake, so it tolerates hyper-thread sharing of the L3 and
+memory bus better.
+The fitted effective parallel fraction $p_"eff" = 0.7296$ gives
+$S_"max" = 1 \/ (1 - 0.7296) approx 3.70 times$, noticeably higher than the
+Python fit, reflecting the continued gains through four threads.
 
 == Weak Scaling --- Python
 
@@ -335,7 +355,7 @@ consistent with the observed saturation beyond two threads.
   caption: [
     Weak scaling of `heatpy-mp`. \
     Scaled speedup $S(n) = n dot eta$ where $eta = T_1 \/ T_n$ is the parallel efficiency. \
-    Dashed blue line: Gustafson's law with empirically fitted $p = 0.01$.
+    Dashed blue line: Gustafson's law fit, $p = -0.270$ (see discussion below).
   ]
 )
 
@@ -345,23 +365,29 @@ consistent with the observed saturation beyond two threads.
     stroke: 0.4pt, inset: 5.5pt,
     align: (left, right, right, right, right, right),
     [*Workers*], [*Grid*],          [*Mean (s)*], [*Std (s)*], [*Efficiency $eta$*], [*Outliers*],
-    [1],         [$256 times 256$], [0.0766],    [0.0070],    [1.000],             [0],
-    [2],         [$362 times 362$], [0.1597],    [0.0083],    [0.480],             [0],
-    [3],         [$443 times 443$], [0.2905],    [0.0165],    [0.264],             [0],
-    [4],         [$512 times 512$], [0.4880],    [0.0087],    [0.157],             [0],
+    [1],         [$256 times 256$], [0.3610],    [0.0393],    [1.000],             [0],
+    [2],         [$362 times 362$], [1.3155],    [0.2509],    [0.274],             [0],
+    [4],         [$512 times 512$], [5.7568],    [0.2498],    [0.063],             [0],
   ),
   caption: [Weak-scaling results for Python. Efficiency $eta = T_1 \/ T_n$.]
 )
 
-Parallel efficiency falls from 100 % at one worker to 15.7 % at four.
-With constant work per worker and ideal hardware, execution time should remain
-fixed at $T_1$ regardless of scale.
-The observed growth in $T_n$ has two causes: the `multiprocessing.Barrier`
-latency increases with participant count, and as the grid expands from
-$256 times 256$ to $512 times 512$ the working set grows from roughly
-0.5 MiB to 2 MiB per frame buffer, moving from L3-resident to DDR4-resident.
-The Gustafson fit returns $p approx 0.01$, indicating that at these grid sizes
-the overhead dominates the parallelisable compute on this hardware.
+Parallel efficiency collapses from 100 % at one worker to 6.3 % at four ---
+much steeper than a synchronisation-overhead story alone would predict.
+As noted above, this experiment does not actually hold total work constant:
+$n_t$ grows roughly linearly with the worker count (308, 615, 1229 steps for
+1, 2, 4 workers) because refining the grid to keep cells-per-worker fixed
+also shrinks the CFL-limited time step. So even a perfectly efficient
+implementation would need noticeably more wall-clock time at $n=4$ than at
+$n=1$ here, simply because it is running roughly $4 times$ as many time
+steps, not because of overhead. On top of that expected growth, the
+`multiprocessing.Barrier` synchronisation cost per step and the transition of
+the frame buffer from L3-resident (0.5 MiB at $256^2$) to DDR4-resident
+(2 MiB at $512^2$) further inflate $T_n$. Because the underlying workload
+is not actually constant, the Gustafson model is not a good fit here: the
+least-squares fit returns a nonphysical $p approx -0.27$, which is itself a
+symptom that scaled speedup is falling faster than the model's assumptions
+allow, rather than a meaningful "small parallel fraction" estimate.
 
 == Weak Scaling --- Rust
 
@@ -370,7 +396,7 @@ the overhead dominates the parallelisable compute on this hardware.
   caption: [
     Weak scaling of `heatrs-mt`. \
     Scaled speedup $S(n) = n dot eta$. \
-    Dashed red line: Gustafson's law with empirically fitted $p = 0.01$.
+    Dashed red line: Gustafson's law fit, $p = -0.181$ (see discussion below).
   ]
 )
 
@@ -380,24 +406,27 @@ the overhead dominates the parallelisable compute on this hardware.
     stroke: 0.4pt, inset: 5.5pt,
     align: (left, right, right, right, right, right),
     [*Threads*], [*Grid*],          [*Mean (s)*], [*Std (s)*], [*Efficiency $eta$*], [*Outliers*],
-    [1],         [$256 times 256$], [0.0089],    [0.0000],    [1.000],             [0],
-    [2],         [$362 times 362$], [0.0355],    [0.0007],    [0.249],             [0],
-    [3],         [$443 times 443$], [0.0791],    [0.0027],    [0.112],             [0],
-    [4],         [$512 times 512$], [0.1385],    [0.0011],    [0.064],             [0],
+    [1],         [$256 times 256$], [0.1480],    [0.0123],    [1.000],             [0],
+    [2],         [$362 times 362$], [0.3715],    [0.0084],    [0.398],             [0],
+    [4],         [$512 times 512$], [1.2775],    [0.0529],    [0.116],             [0],
   ),
   caption: [Weak-scaling results for Rust. Efficiency $eta = T_1 \/ T_n$.]
 )
 
-Rust weak-scaling efficiency falls more steeply still, reaching 6.4 % at four
-threads.
-The single-thread baseline is $0.0766 \/ 0.0089 approx 8.6 times$ faster than
-the Python counterpart, so the two barrier crossings per step constitute a
-proportionally larger share of total elapsed time: at four threads each thread
-computes its band in under 2 ms per step, while barrier co-ordination takes
-hundreds of microseconds.
-The Gustafson fit again yields $p approx 0.01$, confirming that the Rust
-solver is in a synchronisation-dominated regime at these grid sizes on this
-hardware.
+Rust weak-scaling efficiency falls to 39.8 % at two threads and 11.6 % at
+four --- a smaller relative collapse than Python's, though still well short
+of ideal. The same $n_t$-growth argument applies here: the workload is
+roughly $4 times$ larger by step count at four threads than at one, so a
+substantial slowdown is expected on physical grounds alone, independent of
+synchronisation cost.
+The single-thread baseline is $0.3610 \/ 0.1480 approx 2.44 times$ faster
+than the Python counterpart at the same (smallest) grid, a more modest gap
+than the strong-scaling comparison because this grid is small enough that
+neither implementation is bandwidth-bound.
+As with Python, the Gustafson fit is not physically meaningful here
+($p approx -0.18$): it reflects that the measured workload was not actually
+held constant across the series, so scaled speedup falls faster than the
+model can represent with $p >= 0$.
 
 // ════════════════════════════════════════════════════════════
 = Summary
@@ -409,32 +438,43 @@ hardware.
     stroke: 0.4pt, inset: 6pt,
     align: (left, right, right, right, right),
     [*Metric*],                    [*py serial*], [*py-mp (4)*], [*rs serial*], [*rs-mt (4)*],
-    [Mean time (s)],               [0.6039],      [0.4983],      [0.1473],      [0.1408],
-    [Speedup vs own serial],       [---],         [1.21×],       [---],         [1.05×],
-    [Rust vs Python speedup],      [4.10×],       [2.36×],       [---],         [---],
-    [Amdahl $p_"eff"$],            [---],         [0.2683],      [---],         [0.0778],
-    [Amdahl $S_"max"$ (fitted)],   [---],         [1.37×],       [---],         [1.08×],
+    [Mean time (s)],               [9.9403],      [5.6256],      [2.4909],      [1.2025],
+    [Speedup vs own serial],       [---],         [1.77×],       [---],         [2.07×],
+    [Rust vs Python speedup],      [3.99×],       [4.68×],       [---],         [---],
+    [Amdahl $p_"eff"$],            [---],         [0.6447],      [---],         [0.7296],
+    [Amdahl $S_"max"$ (fitted)],   [---],         [2.81×],       [---],         [3.70×],
     [Amdahl $S_"max"$ (ideal)],    [---],         [128×],        [---],         [128×],
   ),
   caption: [
-    Summary at the strong-scaling grid ($512 times 512$, $n_t = 123$).
+    Summary at the strong-scaling grid ($512 times 512$, $n_t = 1229$).
   ]
 )
 
 The ideal parallel fraction of the FTCS stencil is
 $p_"ideal" = 99.22$ %, giving a theoretical Amdahl limit of $128 times$ on
 an infinite-core machine.
-On this two-core / four-thread laptop the achieved speedup is $1.21 times$ (Python)
-and $1.05 times$ (Rust), because the double-buffer working set exceeds the L3 cache
-and the workload becomes bandwidth-bound rather than compute-bound.
+On this two-physical-core / four-logical-thread laptop the achieved speedup
+at four workers is $1.77 times$ (Python) and $2.07 times$ (Rust); Python
+actually peaks higher, at $1.91 times$, with only two workers. Both
+implementations fall well short of the ideal limit because only two of the
+four logical "cores" are independent physical cores --- the third and
+fourth workers are hyper-threads competing for the same execution units,
+L3 cache, and memory bus as their sibling.
 Effective parallel fractions fitted from measurements
-($p_"eff" = 0.27$ for Python, $0.08$ for Rust) reflect this bottleneck and
-correctly predict the observed saturation beyond two workers.
+($p_"eff" = 0.64$ for Python, $0.73$ for Rust) are much closer to the ideal
+value than a purely bandwidth-bound story would suggest, but the Python fit
+is pulled down by its four-worker regression, while Rust's thread-based
+implementation keeps gaining through four threads.
 
-The serial Rust solver is $4.1 times$ faster than serial NumPy on the same
+The serial Rust solver is $3.99 times$ faster than serial NumPy on the same
 problem, owing to auto-vectorised SIMD stencil code and zero-copy double-buffer
 management.
 Both languages parallelise the FTCS scheme correctly and produce results that
-agree to floating-point precision.
+agree to floating-point precision. The weak-scaling experiments, by contrast,
+did not hold total computational work constant (the CFL-limited step count
+grows with worker count as the grid is refined), so the large efficiency
+drop-off seen there partly reflects a growing workload rather than pure
+parallel overhead; a fairer weak-scaling protocol would fix $n_t$ independent
+of grid size.
 
 #bibliography("report.bib", full: true)

@@ -24,7 +24,7 @@ snapshot_every = 1   # default snapshot stride in iterations (0 = final state on
 nx = 512
 ny = 512
 t = 50.0
-cores = [1, 2, 4, 8, 16]
+cores = [1, 2, 4]
 
 [scaling.weak]
 # Per-core problem size held ~constant; total grid grows with core count.
@@ -32,4 +32,4 @@ cores = [1, 2, 4, 8, 16]
 nx0 = 256
 ny0 = 256
 t = 50.0
-cores = [1, 2, 4, 8, 16]
+cores = [1, 2, 4]
