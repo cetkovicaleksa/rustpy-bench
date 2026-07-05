@@ -10,7 +10,7 @@ install:
 	uv sync --locked --dev
 
 build:
-	uv build
+	uv build --all-packages
 
 clean:
 	rm -rf dist build *.egg-info src/*.egg-info	target
