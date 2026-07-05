@@ -1,23 +1,19 @@
 [project]
-name = "heatpy"
+name = "rustpy-bench-core"
 version = "2026.4.0"
-description = "Serial Python (NumPy) reference solver for the 2D heat equation"
+description = "Shared params/config/IO utilities for the rustpy-bench project"
 authors = [
     { name = "Алекса Ћетковић", email = "cetkovic.sv77.2022@uns.ac.rs" }
 ]
 requires-python = ">=3.12"
 dependencies = [
+    "h5py>=3.12",
     "numpy>=2.4.2",
-    "rustpy-bench-core",
-    "typer>=0.24.1",
 ]
 
-[project.scripts]
-heatpy = "heatpy:main"
+[tool.uv.build-backend]
+module-name = "rustpy_bench.core"
 
 [build-system]
 requires = ["uv_build>=0.9.27,<0.10.0"]
 build-backend = "uv_build"
-
-[tool.uv.sources]
-rustpy-bench-core = { workspace = true }
