@@ -1,12 +1,16 @@
 [project]
 name = "heatpy-mp"
 version = "2026.4.0"
-description = "Add your description here"
+description = "Multi-processing Python solver for the 2D heat equation"
 authors = [
     { name = "Алекса Ћетковић", email = "cetkovic.sv77.2022@uns.ac.rs" }
 ]
 requires-python = ">=3.12"
-dependencies = []
+dependencies = [
+    "numpy>=2.4.2",
+    "rustpy-bench-core",
+    "typer>=0.24.1",
+]
 
 [project.scripts]
 heatpy-mp = "heatpy_mp:main"
@@ -14,3 +18,6 @@ heatpy-mp = "heatpy_mp:main"
 [build-system]
 requires = ["uv_build>=0.9.27,<0.10.0"]
 build-backend = "uv_build"
+
+[tool.uv.sources]
+rustpy-bench-core = { workspace = true }
