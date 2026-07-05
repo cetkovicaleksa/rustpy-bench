@@ -1,7 +1,7 @@
 SHELL := /bin/bash
 .DEFAULT_GOAL := dev
 
-.PHONY: dev install build clean clean-all
+.PHONY: dev install build strong weak viz field experiments clean clean-all
 
 dev:
 	uv sync --dev
