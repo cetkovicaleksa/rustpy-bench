@@ -3,6 +3,9 @@ members = [
     "python/*",
     "rust/*",
 ]
+exclude = [
+  "rust/core",
+]
 # cache-dir = "./.cache/uv"
 
 [tool.uv]
@@ -19,6 +22,7 @@ heatpy = { workspace = true }
 heatpy-mp = { workspace = true }
 heatrs = { workspace = true }
 heatrs-mt = { workspace = true }
+rustpy-bench-core = { workspace = true }
 
 # uv requires a root project (let it be a virtual one). This could be the project that preforms experiments, with maturin and PyO3.
 [project]

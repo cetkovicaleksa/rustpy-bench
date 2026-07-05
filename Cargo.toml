@@ -1,5 +1,5 @@
 [workspace]
-resolver = "3"
+resolver = "2"
 members = ["rust/*"]
 
 [workspace.package]
@@ -8,3 +8,13 @@ authors = ["Алекса Ћетковић <cetkovic.sv77.2022@uns.ac.rs>"]
 edition = "2024"
 rust-version = "1.93.0"
 license-file = "license"
+
+[workspace.dependencies]
+serde = { version = "1", features = ["derive"] }
+toml = "0.7"
+hdf5 = "0.8"
+ndarray = "0.15"
+clap = { version = "4", features = ["derive"] }
+hostname = "0.4"
+anyhow = "1"
+rustpy-bench-core = { path = "rust/core" }
