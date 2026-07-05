@@ -115,3 +115,11 @@ make experiments   # strong + weak + viz
 make clean       # caches, build artifacts
 make clean-all   # + .venv and generated *.h5 / *.pdf
 ```
+
+## Results
+
+The report and resulting assets from my experiment run can be found at [results/2026-07-05](./results/2026-07-05/). Below are example gifs generated from all three supported initial conditions:
+
+| gaussian | hot square | uniform |
+|:-:|:-:|:-:|
+| ![sim with gaussian init](results/2026-07-05/examples/gaussian100x100-100s.gif) | ![sim with hot-square init](results/2026-07-05/examples/hot-square320x256-20s.gif) | ![sim with unifor init](results/2026-07-05/examples/uniform100x100-77s.gif) |
