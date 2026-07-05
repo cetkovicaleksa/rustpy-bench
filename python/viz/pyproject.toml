@@ -1,0 +1,25 @@
+[project]
+name = "heatviz"
+version = "2026.4.0"
+description = "Visualization: scaling charts + field GIFs from experiment HDF5 files"
+authors = [
+    { name = "Алекса Ћетковић", email = "cetkovic.sv77.2022@uns.ac.rs" }
+]
+requires-python = ">=3.12"
+dependencies = [
+    "numpy>=2.4.2",
+    "matplotlib>=3.10",
+    "h5py>=3.12",
+    "rustpy-bench-core",
+]
+
+[project.scripts]
+heatviz-scaling = "heatviz.scaling:main"
+heatviz-field   = "heatviz.field:main"
+
+[build-system]
+requires = ["uv_build>=0.9.27,<0.10.0"]
+build-backend = "uv_build"
+
+[tool.uv.sources]
+rustpy-bench-core = { workspace = true }

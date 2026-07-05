@@ -1,2 +1,4 @@
 * text=auto eol=lf
 /docs/assets/* -text -diff
+*.h5 filter=lfs diff=lfs merge=lfs -text
+/results/examples/* filter=lfs diff=lfs merge=lfs -text
