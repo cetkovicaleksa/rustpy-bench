@@ -1,0 +1,11 @@
+site_name: RustpyBench
+theme: readthedocs
+
+repo_url: https://github.com/cetkovicaleksa/rustpy-bench
+edit_uri: ""
+
+nav:
+  - Specification (sr): specification.md
+  - Proposal: proposal.md
+  - index.md
+  - results/index.md

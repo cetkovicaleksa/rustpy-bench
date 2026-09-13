@@ -8,10 +8,10 @@ type: "markdown"
 -->
 
 <div align="left">
-  <picture>
-    <source srcset="docs/assets/ФТН_УНС_лого-dark.svg" media="(prefers-color-scheme: dark)">
-    <source srcset="docs/assets/ФТН_УНС_лого-light.svg" media="(prefers-color-scheme: light)">
-    <img src="docs/assets/ФТН_УНС_лого-light.svg" alt="FTN Logo" height="150">
+  <picture height="2cm">
+    <source srcset="/assets/ftn-logo-light.svg" media="(prefers-color-scheme: dark)">
+    <source srcset="/assets/ftn-logo-dark.svg" media="(prefers-color-scheme: light)">
+    <img src="/assets/ftn-logo-dark.svg" alt="FTN Logo" width="140">
   </picture>
 </div>
 

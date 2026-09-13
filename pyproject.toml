@@ -40,3 +40,6 @@ dev = [
     "heatrs-mt",
     "heatviz",
 ]
+docs = [
+    "mkdocs>=1.6.1",
+]

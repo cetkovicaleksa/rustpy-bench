@@ -1,3 +1,7 @@
+---
+title: Specification
+---
+
 # 1.1.1 Teme iz računarstva visokih performansi
 
 Potrebno je odabrati neki od problema iz oblasti računarstva visokih performansi (engl. *High Performance Computing*, skr. *HPC*) po ličnom nahođenju. Primeri nekih problema su:
