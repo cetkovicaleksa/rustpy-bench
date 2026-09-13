@@ -1,5 +1,7 @@
 site_name: RustpyBench
 theme: readthedocs
+site_author: Алекса Ћетковић
+site_url: "https://www.cetkovic.rs/rustpy-bench"
 
 repo_url: https://github.com/cetkovicaleksa/rustpy-bench
 edit_uri: ""
