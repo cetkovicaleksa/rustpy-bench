@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="description" content="None" /><meta name="author" content="Алекса Ћетковић" /><link rel="canonical" href="https://www.cetkovic.rs/rustpy-bench/" />
+      <link rel="shortcut icon" href="img/favicon.ico" />
+    <title>RustpyBench</title>
+    <link rel="stylesheet" href="css/theme.css" />
+    <link rel="stylesheet" href="css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "RustpyBench: A Comparative Benchmark Python versus Rust on Numerical Solving of the Heat Equation";
+        var mkdocs_page_input_path = "index.md";
+        var mkdocs_page_url = "/rustpy-bench/";
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href="." class="icon icon-home"> RustpyBench
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="./search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="specification/">Specification (sr)</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="proposal/">Proposal</a>
+                </li>
+              </ul>
+              <ul class="current">
+                <li class="toctree-l1 current"><a class="reference internal current" href="#">RustpyBench: A Comparative Benchmark Python versus Rust on Numerical Solving of the Heat Equation</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#project-structure">Project Structure</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#quickstart">Quickstart</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#prerequisites">Prerequisites</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#install-build-everything">Install / build everything</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#run-the-experiments">Run the experiments</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#visualize-the-results">Visualize the results</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#everything-at-once">Everything at once</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#cleaning-up">Cleaning up</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#results">Results</a>
+    </li>
+    </ul>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="results/">Results</a>
+                </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href=".">RustpyBench</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="." class="icon icon-home" aria-label="Docs"></a></li>
+      <li class="breadcrumb-item active">RustpyBench: A Comparative Benchmark Python versus Rust on Numerical Solving of the Heat Equation</li>
+    <li class="wy-breadcrumbs-aside">
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="rustpybench-a-comparative-benchmark-python-versus-rust-on-numerical-solving-of-the-heat-equation">RustpyBench: A Comparative Benchmark Python versus Rust on Numerical Solving of the Heat Equation</h1>
+<p>RustpyBench is a project done for a course Advanced programming techniques at <a href="https://ftn.uns.ac.rs">FTN</a>. It compares how well python and rust ftcs heat equation solvers parallelize by analyzing strong and weak scaling.</p>
+<h2 id="project-structure">Project Structure</h2>
+<pre><code class="language-text">python/
+  core/             rustpy_bench.core — shared library for python solvers
+  serial/           heatpy      — serial NumPy reference solver
+  multi-processing/ heatpy-mp   — multiprocessing (shared-memory) solver
+  viz/              heatviz     — heatviz-scaling / heatviz-field CLIs for generating plots
+
+rust/
+  core/             rustpy-bench-core — shared library for rust solvers (mirrors python/core)
+  serial/           heatrs      — serial solver (packaged as a Python entry point via maturin)
+  multi-threading/  heatrs-mt   — multi-threaded solver (also maturin pakcage)
+
+scripts/
+  strong_scaling.py   driver: fixed problem size, sweeps core/thread count
+  weak_scaling.py      driver: per-worker problem size held constant, grid grows with workers
+  _common.py           shared subprocess/solver-lookup helpers
+
+experiment.toml     single source of truth for equation, initial condition, and
+                     scaling parameters — read by both the Python and Rust sides
+
+results/            report.typ / report.bib (Typst report) + generated assets
+                     (plots, scaling_tables.txt, and the strong.h5 / weak.h5
+                     benchmark outputs, once you've run the experiments)
+
+docs/               specification, proposal, and scaling background notes
+</code></pre>
+<p>Every solver (<code>heatpy</code>, <code>heatpy-mp</code>, <code>heatrs</code>, <code>heatrs-mt</code>) exposes the same CLI shape
+(<code>--nx --ny --t --out --snapshot-every --run-id</code>, plus <code>--workers</code>/<code>--threads</code> for the
+parallel variants) and writes its timing and the temperature-field snapshots into an
+HDF5 group addressed as <code>path/to/file.h5#/group/path</code>. This is what lets one set of
+Python driver scripts (<code>scripts/*.py</code>) benchmark all four variants identically.</p>
+<h2 id="quickstart">Quickstart</h2>
+<h3 id="prerequisites">Prerequisites</h3>
+<ul>
+<li><a href="https://docs.astral.sh/uv/">uv</a> (Python package/venv manager)</li>
+<li>A Rust toolchain (version pinned in <code>rust-toolchain.toml</code>; <code>rustup</code> will fetch it automatically)</li>
+<li><code>libhdf5-dev</code> and <code>pkg-config</code> (needed to build the Rust <code>hdf5</code> crate and potentially the <code>h5py</code> package), and <code>make</code></li>
+</ul>
+<pre><code class="language-sh">sudo apt install libhdf5-dev pkg-config make build-essential
+</code></pre>
+<h3 id="install-build-everything">Install / build everything</h3>
+<pre><code class="language-sh">make install   # uv sync --locked --dev — builds heatpy, heatpy-mp, heatviz,
+               # and (via maturin) the heatrs / heatrs-mt Rust binaries,
+               # all placed on .venv/bin
+</code></pre>
+<p>(<code>make dev</code> does the same without <code>--locked</code>, if you want uv to re-resolve versions.)</p>
+<h3 id="run-the-experiments">Run the experiments</h3>
+<p>Parameters (grid sizes, <code>t_end</code>, core/thread counts, repetitions) come from
+<a href="results/2026-07-05/"><code>experiment.toml</code></a> — edit it once and both drivers below pick it up.</p>
+<pre><code class="language-sh">make strong    # -&gt; results/strong.h5
+make weak      # -&gt; results/weak.h5
+</code></pre>
+<p>Each driver runs the serial baseline plus every core/thread count in
+<code>experiment.toml</code>, <code>[experiment].repetitions</code> times, and appends every run into
+the output HDF5 file under <code>/strong/&lt;variant&gt;/nx{NX}_ny{NY}/cores{N}/&lt;run&gt;</code> (or
+<code>/weak/...</code>).  Re-running is additive — delete <code>results/strong.h5</code> /
+<code>results/weak.h5</code> first if you want a clean run.</p>
+<p>You can override anything the drivers accept directly:</p>
+<pre><code class="language-sh">make strong ARGS=&quot;--reps 5 --cores 1 2 4 --variants heatpy heatpy-mp&quot;
+make weak   ARGS=&quot;--out results/weak_dev.h5 --snapshot-every 50&quot;
+</code></pre>
+<h3 id="visualize-the-results">Visualize the results</h3>
+<pre><code class="language-sh">make viz       # heatviz-scaling --strong results/strong.h5 --weak results/weak.h5 --out-dir results/assets
+</code></pre>
+<p>writes <code>strong_python.svg</code>, <code>strong_rust.svg</code>, <code>weak_python.svg</code>, <code>weak_rust.svg</code>,
+and <code>scaling_tables.txt</code> into <code>results/assets/</code>. Extra args pass straight through
+the same way:</p>
+<pre><code class="language-sh">make viz ARGS=&quot;--out-dir results/assets_v2&quot;
+</code></pre>
+<p>To render an individual run's temperature field as a GIF or a single PNG frame:</p>
+<pre><code class="language-sh">make field ARGS=&quot;--h5 results/strong.h5#/strong/heatrs/nx512_ny512/cores1 --gif results/assets/heatrs.gif&quot;
+make field ARGS=&quot;--h5 results/strong.h5#/strong/heatpy/nx512_ny512/cores1 --frame -1 --png results/assets/heatpy_last.png&quot;
+</code></pre>
+<h3 id="everything-at-once">Everything at once</h3>
+<pre><code class="language-sh">make experiments   # strong + weak + viz
+</code></pre>
+<h3 id="cleaning-up">Cleaning up</h3>
+<pre><code class="language-sh">make clean       # caches, build artifacts
+make clean-all   # + .venv and generated *.h5 / *.pdf
+</code></pre>
+<h2 id="results">Results</h2>
+<p>The report and resulting assets from my experiment run can be found at <a href="results/2026-07-05/">results/2026-07-05</a>. Below are example gifs generated from all three supported initial conditions:</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: center;">gaussian</th>
+<th style="text-align: center;">hot square</th>
+<th style="text-align: center;">uniform</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;"><img alt="sim with gaussian init" src="assets/gaussian100x100-100s.gif" /></td>
+<td style="text-align: center;"><img alt="sim with hot-square init" src="assets/hot-square320x256-20s.gif" /></td>
+<td style="text-align: center;"><img alt="sim with unifor init" src="assets/uniform100x100-77s.gif" /></td>
+</tr>
+</tbody>
+</table>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="proposal/" class="btn btn-neutral float-left" title="Proposal"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="results/" class="btn btn-neutral float-right" title="Results">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+        <span>
+          <a href="https://github.com/cetkovicaleksa/rustpy-bench" class="fa fa-github" style="color: #fcfcfc"> GitHub</a>
+        </span>
+    
+    
+      <span><a href="proposal/" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="results/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = ".";</script>
+    <script src="js/theme_extra.js"></script>
+    <script src="js/theme.js"></script>
+      <script src="search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>
+
+<!--
+MkDocs version : 1.6.1
+Build Date UTC : 2026-09-13 10:22:39.719476+00:00
+-->

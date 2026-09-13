@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="author" content="Алекса Ћетковић" /><link rel="canonical" href="https://www.cetkovic.rs/rustpy-bench/specification/" />
+      <link rel="shortcut icon" href="../img/favicon.ico" />
+    <title>Specification (sr) - RustpyBench</title>
+    <link rel="stylesheet" href="../css/theme.css" />
+    <link rel="stylesheet" href="../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Specification (sr)";
+        var mkdocs_page_input_path = "specification.md";
+        var mkdocs_page_url = "/rustpy-bench/specification/";
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href=".." class="icon icon-home"> RustpyBench
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+                <li class="toctree-l1 current"><a class="reference internal current" href="#">Specification (sr)</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#izrada-projekta-za-maksimalnu-ocenu-6">Izrada projekta za maksimalnu ocenu 6:</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#primeri-adaptacija-predefinisanih-tema">Primeri adaptacija predefinisanih tema:</a>
+    </li>
+    </ul>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../proposal/">Proposal</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="..">RustpyBench: A Comparative Benchmark Python versus Rust on Numerical Solving of the Heat Equation</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../results/">Results</a>
+                </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="..">RustpyBench</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href=".." class="icon icon-home" aria-label="Docs"></a></li>
+      <li class="breadcrumb-item active">Specification (sr)</li>
+    <li class="wy-breadcrumbs-aside">
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="111-teme-iz-racunarstva-visokih-performansi">1.1.1 Teme iz računarstva visokih performansi</h1>
+<p>Potrebno je odabrati neki od problema iz oblasti računarstva visokih performansi (engl. <em>High Performance Computing</em>, skr. <em>HPC</em>) po ličnom nahođenju. Primeri nekih problema su:</p>
+<ul>
+<li>problem n-tela (engl. <em>n-body problem</em>),  </li>
+<li>simulacija dvostrukog klatna (engl. <em>double pendulum simulation</em>) - <strong>maksimalna ocena 6</strong>,  </li>
+<li>Kanonov algoritam za množenje matrica - <strong>maksimalna ocena 6</strong>,  </li>
+<li>dinamika fluida,  </li>
+<li><em>Navier–Stokes</em> jednačina,  </li>
+<li>parcijalne diferencijalne jednačine,  </li>
+<li>problemi linearne algebre,  </li>
+<li>manipulacija grafovima,  </li>
+<li>celularni automati,  </li>
+<li>itd.</li>
+</ul>
+<p>Za izabrani problem, potrebno je uraditi sledeće:</p>
+<ol>
+<li>(25 poena) <strong>Rešiti problem upotrebom programskog jezika <em>Python</em>:</strong>  </li>
+<li>Implementirati <strong>sekvencijalnu verziju rešenja</strong> upotrebom programskog jezika <strong><em>Python</em></strong>. Rezultat mora biti bar jedna datoteka koja reprezentuje promene stanja modelovanog sistema (po iteracijama, ukoliko je problem rešavan iterativnim metodom).  </li>
+<li>Implementirati paralelizovanu verziju rešenja upotrebom multiprocessing biblioteke programskog jezika Python. Rezultat mora biti bar jedna datoteka koja reprezentuje promene stanja  modelovanog sistema (po iteracijama, ukoliko je problem rešavan iterativnim metodom).  </li>
+<li>(26 poena) <strong>Rešiti problem upotrebom programskog jezika <em>Rust</em>:</strong>  </li>
+<li>Implementirati <strong>sekvencijalnu verziju rešenja</strong> upotrebom programskog jezika <strong><em>Rust</em></strong>. Rezultat mora biti bar jedna datoteka koja reprezentuje promene stanja modelovanog sistema (po iteracijama, ukoliko je problem rešavan iterativnim metodom).  </li>
+<li>Implementirati <strong>paralelizovanu verziju rešenja</strong> uz oslonac na <strong>niti</strong> (engl. <em>threads</em>). Rezultat mora biti bar jedna datoteka koja reprezentuje promene stanja modelovanog sistema (po iteracijama, ukoliko je problem rešavan iterativnim metodom).  </li>
+<li>(9 poena) Uraditi <strong>eksperimente jakog i slabog skaliranja,</strong> koji će uporediti dobijeno <strong>ubrzanje paralelizovane <em>Python</em> implementacije</strong> rešenja u odnosu na <strong>sekvencijalnu implementaciju upotrebom istog jezika</strong>.  </li>
+<li>(10 poena) Uraditi <strong>eksperimente jakog i slabog skaliranja</strong> koji će uporediti dobijeno <strong>ubrzanje paralelizovane <em>Rust</em> implementacije</strong> rešenja u odnosu na <strong>sekvencijalnu implementaciju upotrebom istog jezika</strong>.  </li>
+<li>(10 poena) <strong>Vizualizacija rešenja</strong> (po iteracijama, ukoliko je korišćen iterativni model za rešavanje problema) na osnovu prethodno generisanih datoteka, a uz oslonac na <strong><em>Rust</em></strong> okruženje. Dozvoljena je upotreba grafičkih biblioteka poput <a href="https://github.com/plotters-rs/plotters"><em>Plotters</em></a> ili slično.</li>
+</ol>
+<p><strong>Eksperimente jakog i slabog skaliranja</strong> opisati u formi <strong>izveštaja</strong>. Tom prilikom, potrebno je ispoštovati sledeće stavke:</p>
+<ul>
+<li>Navesti tehničke detalje koji se tiču hardverske i softverske arhitekture sistema na kom su rađeni eksperimenti:  </li>
+<li>model procesora, radni takt, organizacija <em>cache</em> memorije, broj fizičkih/logičkih jezgara, broj <em>NUMA node</em>-ova, itd.  </li>
+<li>tip i količina RAM memorije  </li>
+<li>Operativni sistem  </li>
+<li>Dodatne biblioteke koju su korišćene, kao i njihove verzije  </li>
+<li>ostale informacije koje mogu uticati na rezultate eksperimenata.  </li>
+<li>Odrediti procenat sekvencijalnog dela koda koji se po prirodi problema ne može paralelizovati.  </li>
+<li>Odrediti procenat paralelnog dela koda koji se može paralelizovati.  </li>
+<li>Odrediti teorijske maksimume ubrzanja u skladu sa <em>Amdalovim</em>, odnosno <em>Gustafsonovim</em> zakonom. Kao veoma koristan izvor informacija može poslužiti <a href="https://www.kth.se/blogs/pdc/2018/11/scalability-strong-and-weak-scaling/">sledeći članak</a>.  </li>
+<li>Neophodno je generisati bar 4 grafika:  </li>
+<li>jako skaliranje <em>Python</em> paralelne implementacije u skladu sa Amdalovim zakonom  </li>
+<li>jako skaliranje <em>Rust</em> paralelne implementacije u skladu sa Amdalovim zakonom  </li>
+<li>slabo skaliranje <em>Python</em> paralelne implementacije u skladu sa Gustafsonovim zakonom  </li>
+<li>slabo skaliranje <em>Rust</em> paralelne implementacije u skladu sa Gustafsonovim zakonom  </li>
+<li>Na svakom od prethodno pomenutih grafika, x-osa predstavlja broj procesorskih jezgara, dok y-osa predstavlja ostvareno ubrzanje. Takođe, na svakom grafiku nacrtati liniju teorijskog maksimuma (idealnog skaliranja) i uporediti je sa dobijenim rezultatima.  </li>
+<li>Kod eksperimenta slabog skaliranja, objasniti na koji način se manipuliše poslom, tj. kako se modifikacijom parametara postiže konstantan posao po procesorskom jezgru.  </li>
+<li>Svaki grafik treba da sledi potporna tabela sa informacijama o srednjem vremenu izvršavanja, standardnoj devijaciji, kao i o eventualnim <em>outlier</em>-ima. Kako bi rezultati bili relevantni, za svaku kombinaciju parametara jakog, odnosno slabog skaliranja (broj procesorskih jezgra, veličina problema iskazana odgovarajućom kombinacijom ulaznih argumenata programa...), ekskluzivno izvršiti programsko rešenje 30-ak puta.  </li>
+<li>Dodatne informacije koje se tiču jakog i slabog skaliranja možete pronaći u <a href="https://www.kth.se/blogs/pdc/2018/11/scalability-strong-and-weak-scaling/">navedenom članku</a>.  </li>
+</ul>
+<h2 id="izrada-projekta-za-maksimalnu-ocenu-6">Izrada projekta za maksimalnu ocenu 6:</h2>
+<p>Ukoliko se student odluči za olakšanu verziju projekta za maksimalnu ocenu 6, potrebno je da izabere jednu od tema iz računarstva visokih performansi i da odradi Python ili Rust implementaciju po gore navedenim zahtevima (bez eksperimenata skaliranja i vizuelizacije). <strong><em>Studenti koji se prijave za ovu opciju nemaju pravo izlaska na test za preostalih 20 poena.</em></strong></p>
+<h2 id="primeri-adaptacija-predefinisanih-tema">Primeri adaptacija predefinisanih tema:</h2>
+<ul>
+<li><a href="https://github.com/gazdicdanica/mandelbrot_generator">Mandelbrot generator</a>  </li>
+<li><a href="https://github.com/fmladenovic/FractalTree">Fraktalna stabla</a>,  </li>
+<li><a href="https://gitlab.com/mihajlokusljic/determinantcalculator">Računanje determinante matrice primenom Laplasovog razvoja po prvoj vrsti</a>,  </li>
+<li><a href="https://github.com/DusanStevic/NTP/blob/master/diplomski_rad_dusan_stevic_sw_10_2016.pdf">Analiza serijske i parallelne implementacije algoritama baziranih na Monte-Karlo metodi</a>,  </li>
+<li>Kanonov algoritam za množenje matrica (primer jednog projekta na ovu temu možete pronaći na <a href="https://github.com/MicaTravica/ntp/blob/master/Izve%C5%A1taj.pdf">linku</a>),  </li>
+<li><a href="https://github.com/Balenko/ntp2019">Dinamika fluida</a>,  </li>
+<li><a href="https://github.com/vujadinovicn/2d-convolution-hpc">2D konvolucija</a>,  </li>
+<li><a href="https://github.com/permitt/random-forest">Random Forest</a>,  </li>
+<li><a href="https://github.com/didulidu/NTP">Huffman Coding Algorithm (ocena 6)</a>,  </li>
+<li>Itd.</li>
+</ul>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../proposal/" class="btn btn-neutral float-right" title="Proposal">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+        <span>
+          <a href="https://github.com/cetkovicaleksa/rustpy-bench" class="fa fa-github" style="color: #fcfcfc"> GitHub</a>
+        </span>
+    
+    
+    
+      <span><a href="../proposal/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "..";</script>
+    <script src="../js/theme_extra.js"></script>
+    <script src="../js/theme.js"></script>
+      <script src="../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>
