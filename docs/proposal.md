@@ -73,7 +73,7 @@ Python implementation will rely on the **multiprocessing** library to deal with 
 - <https://github.com/leo-aa88/heat-equation-2d>  
 - <https://youtube.com/playlist?list=PLZHQObOWTQDNPOjrT6KVlfJuKtYTftqH6&si=xHx3MAjj2dyQJJQq>  
 
-[ntp]: https://igordejanovic.net/courses/ntp/ "Course website | igordejanovic.net"  
-[id]: https://igordejanovic.net/about "Игор Дејановић | igordejanovic.net"  
+[ntp]: https://igor.dejanovic.online/courses/ntp/ "Course website | igor.dejanovic.online"  
+[id]: https://igor.dejanovic.online/about "Игор Дејановић | igor.dejanovic.online"  
 [mj]: https://ftn.uns.ac.rs/2872/milena-jelic  "Милена Јелић | FTN"  
 [ac]: https://cetkovicaleksa.github.io "Алекса Ћетковић | cetkovicaleksa.github.io"  
